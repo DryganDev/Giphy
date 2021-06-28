@@ -14,7 +14,7 @@ struct GiphyAppApp: App {
     var body: some Scene {
         WindowGroup {
             TabsView()
-                .environmentObject(FeedViewModel(networkModel: NetworkModel()))
+                .environmentObject(FeedViewModel(networkModel: NetworkModel(), imageCacheModel: ImageCacheModel()))
         }
     }
 }
