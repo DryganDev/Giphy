@@ -7,6 +7,14 @@
 
 import UIKit
 
+// https://www.raywenderlich.com/4829472-uicollectionview-custom-layout-tutorial-pinterest#toc-anchor-001
+
+protocol CustomCollectionLayoutDelegate: AnyObject {
+    func collectionView(_ collectionView: UICollectionView, heightForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsIn section: CollectionView.Section) -> Int
+}
+
 @propertyWrapper
 struct Colomn {
     
@@ -22,161 +30,98 @@ struct Colomn {
 }
 
 final class CustomCollectionLayout: UICollectionViewFlowLayout {
-    @Colomn var colomns: Int
+    // 1
+    weak var delegate: CustomCollectionLayoutDelegate?
+    
+    // 2
+    @Colomn private var numberOfColumns: Int
+    private let cellPadding: CGFloat = 6
+    
+    // 3
+    private var cache: [UICollectionViewLayoutAttributes] = []
+    
+    // 4
+    private var contentHeight: CGFloat = 0
+    
+    private var contentWidth: CGFloat {
+        guard let collectionView = collectionView else {
+            return 0
+        }
+        let insets = collectionView.contentInset
+        return collectionView.bounds.width - (insets.left + insets.right)
+    }
+    
+    // 5
+    override var collectionViewContentSize: CGSize {
+        return CGSize(width: contentWidth, height: contentHeight)
+    }
     
     required init(colomns: Int) {
-        self.colomns = 1
+        self.numberOfColumns = colomns
         super.init()
-        
-        scrollDirection = .vertical
-        estimatedItemSize = UICollectionViewFlowLayout.automaticSize
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        guard let layoutAttributes = super.layoutAttributesForItem(at: indexPath) else { return nil }
-        guard let collectionView = collectionView else { return layoutAttributes }
-
-        let marginsAndInsets = collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + sectionInset.left + sectionInset.right + minimumInteritemSpacing * CGFloat(colomns - 1)
-        layoutAttributes.bounds.size.width = ((collectionView.bounds.width - marginsAndInsets) / CGFloat(colomns)).rounded(.down)
-
-        return layoutAttributes
+    override func prepare() {
+        // 1
+        guard let collectionView = collectionView else {
+            return
+        }
+        // 2
+        let columnWidth = contentWidth / CGFloat(numberOfColumns)
+        var xOffset: [CGFloat] = []
+        for column in 0..<numberOfColumns {
+            xOffset.append(CGFloat(column) * columnWidth)
+        }
+        var column = 0
+        var yOffset: [CGFloat] = .init(repeating: 0, count: numberOfColumns)
+        
+        // 3
+        let numberOfItems = delegate?.collectionView(collectionView,
+                                                     numberOfItemsIn: .first) ?? 0
+        for item in 0..<numberOfItems {
+            let indexPath = IndexPath(item: item, section: 0)
+            
+            // 4
+            let photoHeight = delegate?.collectionView(
+                collectionView,
+                heightForPhotoAtIndexPath: indexPath) ?? 180
+            let height = cellPadding * 2 + photoHeight
+            let frame = CGRect(x: xOffset[column],
+                               y: yOffset[column],
+                               width: columnWidth,
+                               height: height)
+            let insetFrame = frame.insetBy(dx: cellPadding, dy: cellPadding)
+            
+            // 5
+            let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+            attributes.frame = insetFrame
+            cache.append(attributes)
+            
+            // 6
+            contentHeight = max(contentHeight, frame.maxY)
+            yOffset[column] = yOffset[column] + height
+            
+            column = column < (numberOfColumns - 1) ? (column + 1) : 0
+        }
     }
-
+    
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let superLayoutAttributes = super.layoutAttributesForElements(in: rect)!.map { $0.copy() as! UICollectionViewLayoutAttributes }
-        guard scrollDirection == .vertical else { return superLayoutAttributes }
-
-        let layoutAttributes = superLayoutAttributes.compactMap { layoutAttribute in
-            return layoutAttribute.representedElementCategory == .cell ? layoutAttributesForItem(at: layoutAttribute.indexPath) : layoutAttribute
-        }
-
-        // (optional) Uncomment to top align cells that are on the same line
-        /*
-        let cellAttributes = layoutAttributes.filter({ $0.representedElementCategory == .cell })
-        for (_, attributes) in Dictionary(grouping: cellAttributes, by: { ($0.center.y / 10).rounded(.up) * 10 }) {
-            guard let max = attributes.max(by: { $0.size.height < $1.size.height }) else { continue }
-            for attribute in attributes where attribute.size.height != max.size.height {
-                attribute.frame.origin.y = max.frame.origin.y
+        var visibleLayoutAttributes: [UICollectionViewLayoutAttributes] = []
+        
+        // Loop through the cache and look for items in the rect
+        for attributes in cache {
+            if attributes.frame.intersects(rect) {
+                visibleLayoutAttributes.append(attributes)
             }
         }
-         */
-
-        // (optional) Uncomment to bottom align cells that are on the same line
-        /*
-        let cellAttributes = layoutAttributes.filter({ $0.representedElementCategory == .cell })
-        for (_, attributes) in Dictionary(grouping: cellAttributes, by: { ($0.center.y / 10).rounded(.up) * 10 }) {
-            guard let max = attributes.max(by: { $0.size.height < $1.size.height }) else { continue }
-            for attribute in attributes where attribute.size.height != max.size.height {
-                attribute.frame.origin.y += max.frame.maxY - attribute.frame.maxY
-            }
-        }
-         */
-
-        return layoutAttributes
+        return visibleLayoutAttributes
     }
     
-//    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
-//        proposedContentOffset
-//    }
-//    open var minimumLineSpacing: CGFloat
-//
-//    open var minimumInteritemSpacing: CGFloat
-//
-//    open var itemSize: CGSize
-//
-//    @available(iOS 8.0, *)
-//    open var estimatedItemSize: CGSize // defaults to CGSizeZero - setting a non-zero size enables cells that self-size via -preferredLayoutAttributesFittingAttributes:
-//
-//    open var scrollDirection: UICollectionView.ScrollDirection // default is UICollectionViewScrollDirectionVertical
-//
-//    open var headerReferenceSize: CGSize
-//
-//    open var footerReferenceSize: CGSize
-//
-//    open var sectionInset: UIEdgeInsets
-//
-//    
-//    /// The reference boundary that the section insets will be defined as relative to. Defaults to `.fromContentInset`.
-//    /// NOTE: Content inset will always be respected at a minimum. For example, if the sectionInsetReference equals `.fromSafeArea`, but the adjusted content inset is greater that the combination of the safe area and section insets, then section content will be aligned with the content inset instead.
-//    @available(iOS 11.0, *)
-//    open var sectionInsetReference: UICollectionViewFlowLayout.SectionInsetReference
-//
-//    
-//    // Set these properties to YES to get headers that pin to the top of the screen and footers that pin to the bottom while scrolling (similar to UITableView).
-//    @available(iOS 9.0, *)
-//    open var sectionHeadersPinToVisibleBounds: Bool
-//
-//    @available(iOS 9.0, *)
-//    open var sectionFootersPinToVisibleBounds: Bool
-    
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        return cache[indexPath.item]
+    }
 }
-
-//import UIKit
-
-//class FlowLayout: UICollectionViewFlowLayout {
-
-//    let cellsPerRow: Int
-//
-//    required init(cellsPerRow: Int = 1, minimumInteritemSpacing: CGFloat = 0, minimumLineSpacing: CGFloat = 0, sectionInset: UIEdgeInsets = .zero) {
-//        self.cellsPerRow = cellsPerRow
-//
-//        super.init()
-//
-//        self.minimumInteritemSpacing = minimumInteritemSpacing
-//        self.minimumLineSpacing = minimumLineSpacing
-//        self.sectionInset = sectionInset
-//        estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-//    }
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//
-//    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-//        guard let layoutAttributes = super.layoutAttributesForItem(at: indexPath) else { return nil }
-//        guard let collectionView = collectionView else { return layoutAttributes }
-//
-//        let marginsAndInsets = collectionView.safeAreaInsets.left + collectionView.safeAreaInsets.right + sectionInset.left + sectionInset.right + minimumInteritemSpacing * CGFloat(cellsPerRow - 1)
-//        layoutAttributes.bounds.size.width = ((collectionView.bounds.width - marginsAndInsets) / CGFloat(cellsPerRow)).rounded(.down)
-//
-//        return layoutAttributes
-//    }
-//
-//    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-//        let superLayoutAttributes = super.layoutAttributesForElements(in: rect)!.map { $0.copy() as! UICollectionViewLayoutAttributes }
-//        guard scrollDirection == .vertical else { return superLayoutAttributes }
-//
-//        let layoutAttributes = superLayoutAttributes.compactMap { layoutAttribute in
-//            return layoutAttribute.representedElementCategory == .cell ? layoutAttributesForItem(at: layoutAttribute.indexPath) : layoutAttribute
-//        }
-//
-//        // (optional) Uncomment to top align cells that are on the same line
-//        /*
-//        let cellAttributes = layoutAttributes.filter({ $0.representedElementCategory == .cell })
-//        for (_, attributes) in Dictionary(grouping: cellAttributes, by: { ($0.center.y / 10).rounded(.up) * 10 }) {
-//            guard let max = attributes.max(by: { $0.size.height < $1.size.height }) else { continue }
-//            for attribute in attributes where attribute.size.height != max.size.height {
-//                attribute.frame.origin.y = max.frame.origin.y
-//            }
-//        }
-//         */
-//
-//        // (optional) Uncomment to bottom align cells that are on the same line
-//        /*
-//        let cellAttributes = layoutAttributes.filter({ $0.representedElementCategory == .cell })
-//        for (_, attributes) in Dictionary(grouping: cellAttributes, by: { ($0.center.y / 10).rounded(.up) * 10 }) {
-//            guard let max = attributes.max(by: { $0.size.height < $1.size.height }) else { continue }
-//            for attribute in attributes where attribute.size.height != max.size.height {
-//                attribute.frame.origin.y += max.frame.maxY - attribute.frame.maxY
-//            }
-//        }
-//         */
-//
-//        return layoutAttributes
-//    }
-//
-//}

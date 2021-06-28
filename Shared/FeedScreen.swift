@@ -12,13 +12,22 @@ struct FeedScreen: View {
     @EnvironmentObject var feedViewModel: FeedViewModel
     
     var body: some View {
-        CollectionView(array: feedViewModel.gifs) {
-            gif in
-            print(gif)
-        }
-        .onAppear {
-            feedViewModel.getFeed()
-        }
+        CollectionView(array: feedViewModel.gifs)
+            .willDisplay {
+                [weak feedViewModel] gif in
+                feedViewModel?.startLoading(gif)
+            }
+            .didEndDisplayin {
+                [weak feedViewModel] gif in
+                feedViewModel?.stopLoading(gif)
+            }
+            .select {
+                gif in
+                print(gif)
+            }
+            .onAppear {
+                feedViewModel.getFeed()
+            }
     }
     
 }

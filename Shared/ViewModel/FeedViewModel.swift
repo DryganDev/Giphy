@@ -8,42 +8,34 @@
 import Foundation
 import Combine
 
-enum NetworkError: Error {
-    case requestCreating
-}
-
 protocol FeedViewModelProtocol: ObservableObject {
     
     var error: Error? { get set }
     var isLoading: Bool { get set }
-    var gifs: [Datum] { get set }
-    
+    var gifs: [Gif] { get set }
+        
     func getFeed()
 }
-
 
 final class FeedViewModel: FeedViewModelProtocol {
     
     private let networkModel: NetworkModelProtocol
+    private let imageCacheModel: ImageCacheModelProtocol
     
-    private var data: [GyphyData] = [] {
-        didSet {
-            data.forEach {
-                gifs.append(contentsOf: $0.data)
-            }
-        }
-    }
     @Published var error: Error?
     @Published var isLoading: Bool = false
-    @Published var gifs: [Datum] = []
+    var gifs: [Gif] = []
     
     private var cancelations: Set<AnyCancellable> = .init()
     
-    init(networkModel: NetworkModelProtocol) {
+    init(networkModel: NetworkModelProtocol, imageCacheModel: ImageCacheModelProtocol) {
         self.networkModel = networkModel
+        self.imageCacheModel = imageCacheModel
         networkModel.feedSubject
-            .map { data in
-                return data.flatMap{$0.data}
+            .map {
+                $0
+                    .flatMap { $0.data }
+                    .map { Gif(meta: $0) }
             }
             .sink(receiveCompletion: { [weak self] completion in
                 switch completion {
@@ -52,16 +44,32 @@ final class FeedViewModel: FeedViewModelProtocol {
                     case .finished: break
                 }
             }, receiveValue: { [weak self] value in
-                self?.isLoading = false
                 self?.gifs = value
+                self?.isLoading = false
             })
             .store(in: &cancelations)
     }
+    
     // MARK: - Feed
     func getFeed() {
         isLoading = true
-        networkModel
-            .loadFeed()
+        networkModel.loadFeed()
+    }
+    
+    func startLoading(_ gif: Gif) {
+        guard let urlString = gif.meta.images.fixedWidth?.url,
+              let url = URL(string: urlString) else {
+            fatalError()
+        }
+        imageCacheModel.startLoading(gif, by: url)
+    }
+    
+    func stopLoading(_ gif: Gif) {
+        guard let urlString = gif.meta.images.fixedWidth?.url,
+              let url = URL(string: urlString) else {
+            fatalError()
+        }
+        imageCacheModel.stopLoading(gif, by: url)
     }
         
 }
