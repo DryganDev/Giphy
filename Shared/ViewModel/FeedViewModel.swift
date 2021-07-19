@@ -24,7 +24,7 @@ final class FeedViewModel: FeedViewModelProtocol {
     
     @Published var error: Error?
     @Published var isLoading: Bool = false
-    var gifs: [Gif] = []
+    @Published var gifs: [Gif] = []
     
     private var cancelations: Set<AnyCancellable> = .init()
     

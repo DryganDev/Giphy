@@ -22,6 +22,9 @@ struct CollectionView: UIViewRepresentable {
     private var selectedGif: ((Gif) -> Void)?
     private var willDisplay: ((Gif) -> Void)?
     private var didEndDisplaying: ((Gif) -> Void)?
+    private var removeItem: ((Gif) -> Void)?
+    private var saveItem: ((Gif) -> Void)?
+    private var shareItem: ((Gif) -> Void)?
     
     init(array: [Gif]) {
         self.array = array
@@ -48,10 +51,10 @@ struct CollectionView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UICollectionView, context: Context) {
+        uiView.collectionViewLayout.invalidateLayout()
         let dataSource = context.coordinator.dataSource
         context.coordinator.array = array
         compose(dataSource)
-        
     }
 
     func makeCoordinator() -> Coordinator {
@@ -59,6 +62,9 @@ struct CollectionView: UIViewRepresentable {
         coordinator.selectedGif = selectedGif
         coordinator.willDisplay = willDisplay
         coordinator.didEndDisplaying = didEndDisplaying
+        coordinator.removeItem = removeItem
+        coordinator.saveItem = saveItem
+        coordinator.shareItem = shareItem
         return coordinator
     }
 
@@ -69,6 +75,9 @@ struct CollectionView: UIViewRepresentable {
         var array: [Gif] = []
         var willDisplay: ((Gif) -> Void)?
         var didEndDisplaying: ((Gif) -> Void)?
+        var removeItem: ((Gif) -> Void)?
+        var saveItem: ((Gif) -> Void)?
+        var shareItem: ((Gif) -> Void)?
         
         func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
             guard let item = dataSource?.itemIdentifier(for: indexPath) else {
@@ -102,6 +111,34 @@ struct CollectionView: UIViewRepresentable {
             didEndDisplaying?(item)
         }
         
+        func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+            
+            guard let item = dataSource?.itemIdentifier(for: indexPath) else {
+                return nil
+            }
+            
+            let context = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { (action) -> UIMenu? in
+                
+                let save = UIAction(title: "Save", image: UIImage(systemName: "square.and.arrow.down")) {
+                    [unowned self] _ in
+                    self.saveItem?(item)
+                }
+                
+                let remove = UIAction(title: "Remove", image: UIImage(systemName: "trash"), attributes: .destructive, state: .off) {
+                    [unowned self] _ in
+                    self.removeItem?(item)
+                }
+                
+                let share = UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) {
+                    [unowned self] _ in
+                    self.shareItem?(item)
+                }
+                
+                return UIMenu(title: "Actions", image: nil, identifier: nil, options: UIMenu.Options.displayInline, children: [save, share, remove])
+            }
+            return context
+        }
+        
     }
     
     func compose(_ dataSource: UICollectionViewDiffableDataSource<Section, Gif>?) {
@@ -129,6 +166,24 @@ struct CollectionView: UIViewRepresentable {
     func select(action: @escaping (Gif) -> Void) -> CollectionView {
         var `self` = self
         self.selectedGif = action
+        return self
+    }
+    
+    func removeItem(action: @escaping (Gif) -> Void) -> CollectionView {
+        var `self` = self
+        self.removeItem = action
+        return self
+    }
+    
+    func saveItem(action: @escaping (Gif) -> Void) -> CollectionView {
+        var `self` = self
+        self.saveItem = action
+        return self
+    }
+    
+    func shareItem(action: @escaping (Gif) -> Void) -> CollectionView {
+        var `self` = self
+        self.shareItem = action
         return self
     }
     

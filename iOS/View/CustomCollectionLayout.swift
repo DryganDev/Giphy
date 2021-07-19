@@ -124,4 +124,10 @@ final class CustomCollectionLayout: UICollectionViewFlowLayout {
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         return cache[indexPath.item]
     }
+    
+    override func invalidateLayout() {
+        super.invalidateLayout()
+        
+        cache.removeAll()
+    }
 }
