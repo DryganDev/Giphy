@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5882A1F82686823B006704DD /* ImageService in Frameworks */ = {isa = PBXBuildFile; productRef = 5882A1F72686823B006704DD /* ImageService */; };
+		58971607268A18DB00B8F50E /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58971606268A18DB00B8F50E /* ActivityView.swift */; };
 		A41A9F73266F723400409ABB /* UIImage+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41A9F72266F723400409ABB /* UIImage+Helper.swift */; };
 		A41A9F74266F723400409ABB /* UIImage+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41A9F72266F723400409ABB /* UIImage+Helper.swift */; };
 		A441EC24262B643600795A95 /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A441EC23262B643600795A95 /* FeedScreen.swift */; };
@@ -109,6 +110,7 @@
 
 /* Begin PBXFileReference section */
 		5882A1F526868056006704DD /* ImageService */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ImageService; sourceTree = "<group>"; };
+		58971606268A18DB00B8F50E /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		A41A9F72266F723400409ABB /* UIImage+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Helper.swift"; sourceTree = "<group>"; };
 		A441EC23262B643600795A95 /* FeedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedScreen.swift; sourceTree = "<group>"; };
 		A441EC2D262B644E00795A95 /* FavoritesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesScreen.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				A455CB0E263C22FF0096DF6B /* CustomCollectionLayout.swift */,
 				A455CB12263C4BA00096DF6B /* GifViewCell.swift */,
 				A455CB13263C4BA00096DF6B /* GifViewCell.xib */,
+				58971606268A18DB00B8F50E /* ActivityView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -684,6 +687,7 @@
 				A4CA2181267C06D100502C5D /* NetworkError.swift in Sources */,
 				A457E79A262B4FDF0040F10E /* Persistence.swift in Sources */,
 				A455CB1A263C61E10096DF6B /* FeedViewModel.swift in Sources */,
+				58971607268A18DB00B8F50E /* ActivityView.swift in Sources */,
 				A4F962722654E8C500932AD7 /* NetworkModel.swift in Sources */,
 				A455CB14263C4BA00096DF6B /* GifViewCell.swift in Sources */,
 				A457E816262B62DA0040F10E /* SearchScreen.swift in Sources */,

@@ -7,8 +7,9 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
-final class Gif: Hashable {
+final class Gif: Hashable, Identifiable {
     static func == (lhs: Gif, rhs: Gif) -> Bool {
         lhs.meta == rhs.meta
         && lhs.image == rhs.image

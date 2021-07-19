@@ -10,50 +10,43 @@ import SwiftUI
 struct FeedScreen: View {
     
     @EnvironmentObject var feedViewModel: FeedViewModel
+    @State var shareGif: Gif? = nil
     
     var body: some View {
         CollectionView(array: feedViewModel.gifs)
             .willDisplay {
-                [weak feedViewModel] gif in
-                feedViewModel?.startLoading(gif)
+                [unowned feedViewModel] gif in
+                feedViewModel.startLoading(gif)
             }
             .didEndDisplayin {
-                [weak feedViewModel] gif in
-                feedViewModel?.stopLoading(gif)
+                [unowned feedViewModel] gif in
+                feedViewModel.stopLoading(gif)
             }
             .select {
                 gif in
                 print(gif)
             }
+            .removeItem {
+                [unowned feedViewModel] gif in
+                feedViewModel.gifs.removeAll{ $0 == gif }
+            }
+            .saveItem {
+                gif in
+            }
+            .shareItem {
+                gif in
+                guard gif.image != nil else {
+                    return
+                }
+                shareGif = gif
+            }
             .onAppear {
+                [unowned feedViewModel] in
                 feedViewModel.getFeed()
+            }
+            .sheet(item: $shareGif) { gif in
+                ActivityView(activityItem: gif)
             }
     }
     
 }
-
-struct FeedScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        FeedScreen()
-    }
-}
-
-//struct ActivityIndicator: UIViewRepresentable {
-////    @Binding var isAnimating: Bool
-//
-//    func makeUIView(context: Context) -> UIActivityIndicatorView {
-////        let v = UIActivityIndicatorView()
-////
-////        return v
-//    }
-//
-//    func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {
-////        if isAnimating {
-////            uiView.startAnimating()
-////        } else {
-////            uiView.stopAnimating()
-////        }
-//    }
-//}
-
-
