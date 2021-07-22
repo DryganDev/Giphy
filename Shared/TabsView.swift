@@ -19,18 +19,12 @@ struct TabsView: View {
                     Text(LocalizedStringKey("Feed"))
                 }
                 .tag(0)
-            SearchScreen()
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text(LocalizedStringKey("Search"))
-                }
-                .tag(1)
             FavoritesScreen()
                 .tabItem {
                     Image(systemName: "star")
                     Text(LocalizedStringKey("Favorites"))
                 }
-                .tag(2)
+                .tag(1)
         }
     }
 }

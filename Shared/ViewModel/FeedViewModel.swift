@@ -5,7 +5,6 @@
 //  Created by Artsiom Sazonau on 30.04.21.
 //
 
-import Foundation
 import Combine
 
 protocol FeedViewModelProtocol: ObservableObject {
