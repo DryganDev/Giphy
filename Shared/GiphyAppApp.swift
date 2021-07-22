@@ -12,9 +12,14 @@ struct GiphyAppApp: App {
     let persistenceController = PersistenceController.preview
     
     var body: some Scene {
+        let searchVM = SearchViewModel()
+        let feedViewModel = FeedViewModel(networkModel: NetworkModel(),
+                                          imageCacheModel: ImageCacheModel())
         WindowGroup {
             TabsView()
-                .environmentObject(FeedViewModel(networkModel: NetworkModel(), imageCacheModel: ImageCacheModel()))
+                .environmentObject(feedViewModel)
+                .environmentObject(searchVM)
         }
     }
+    
 }

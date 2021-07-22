@@ -15,6 +15,8 @@
 		A441EC25262B643600795A95 /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A441EC23262B643600795A95 /* FeedScreen.swift */; };
 		A441EC2E262B644E00795A95 /* FavoritesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A441EC2D262B644E00795A95 /* FavoritesScreen.swift */; };
 		A441EC2F262B644E00795A95 /* FavoritesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A441EC2D262B644E00795A95 /* FavoritesScreen.swift */; };
+		A44218F8269119FA00FECF36 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44218F7269119FA00FECF36 /* SearchViewModel.swift */; };
+		A44218F9269119FA00FECF36 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44218F7269119FA00FECF36 /* SearchViewModel.swift */; };
 		A455CB0D263C224A0096DF6B /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A455CB0C263C224A0096DF6B /* CollectionView.swift */; };
 		A455CB0F263C22FF0096DF6B /* CustomCollectionLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A455CB0E263C22FF0096DF6B /* CustomCollectionLayout.swift */; };
 		A455CB14263C4BA00096DF6B /* GifViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A455CB12263C4BA00096DF6B /* GifViewCell.swift */; };
@@ -114,6 +116,7 @@
 		A41A9F72266F723400409ABB /* UIImage+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Helper.swift"; sourceTree = "<group>"; };
 		A441EC23262B643600795A95 /* FeedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedScreen.swift; sourceTree = "<group>"; };
 		A441EC2D262B644E00795A95 /* FavoritesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesScreen.swift; sourceTree = "<group>"; };
+		A44218F7269119FA00FECF36 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		A455CB0C263C224A0096DF6B /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		A455CB0E263C22FF0096DF6B /* CustomCollectionLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionLayout.swift; sourceTree = "<group>"; };
 		A455CB12263C4BA00096DF6B /* GifViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifViewCell.swift; sourceTree = "<group>"; };
@@ -380,6 +383,7 @@
 			isa = PBXGroup;
 			children = (
 				A455CB19263C61E10096DF6B /* FeedViewModel.swift */,
+				A44218F7269119FA00FECF36 /* SearchViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -692,6 +696,7 @@
 				A455CB14263C4BA00096DF6B /* GifViewCell.swift in Sources */,
 				A457E816262B62DA0040F10E /* SearchScreen.swift in Sources */,
 				A457E805262B61840040F10E /* TabsView.swift in Sources */,
+				A44218F8269119FA00FECF36 /* SearchViewModel.swift in Sources */,
 				A441EC2E262B644E00795A95 /* FavoritesScreen.swift in Sources */,
 				A4CA217F267C06BC00502C5D /* Gif.swift in Sources */,
 				A457E796262B4FDF0040F10E /* GiphyAppApp.swift in Sources */,
@@ -710,6 +715,7 @@
 				A457E817262B62DA0040F10E /* SearchScreen.swift in Sources */,
 				A457E806262B61840040F10E /* TabsView.swift in Sources */,
 				A441EC2F262B644E00795A95 /* FavoritesScreen.swift in Sources */,
+				A44218F9269119FA00FECF36 /* SearchViewModel.swift in Sources */,
 				A457E797262B4FDF0040F10E /* GiphyAppApp.swift in Sources */,
 				A455CB1F263CC4BD0096DF6B /* GyphyData.swift in Sources */,
 				A455CB22263F3A0C0096DF6B /* GiphyRequestFactory.swift in Sources */,
@@ -913,7 +919,7 @@
 				DEVELOPMENT_TEAM = GHZCTHXK8S;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -936,7 +942,7 @@
 				DEVELOPMENT_TEAM = GHZCTHXK8S;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -965,7 +971,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = some.company.GiphyApp;
 				PRODUCT_NAME = GiphyApp;
 				SDKROOT = macosx;
@@ -988,7 +994,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = some.company.GiphyApp;
 				PRODUCT_NAME = GiphyApp;
 				SDKROOT = macosx;
