@@ -11,7 +11,8 @@ import SwiftUI
 struct CollectionView: UIViewRepresentable {
     
     enum Constant {
-        static let colomns = 2
+        static let iosColomns = 2
+        static let ipadColomns = 3
     }
     
     enum Section: CaseIterable {
@@ -31,7 +32,7 @@ struct CollectionView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> UICollectionView {
-        let layout = CustomCollectionLayout(colomns: Constant.colomns)
+        let layout = CustomCollectionLayout(colomns: UIDevice.current.userInterfaceIdiom != .pad ? Constant.iosColomns : Constant.ipadColomns)
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = UIColor.clear
         view.register(UINib(nibName: GifViewCell.id, bundle: nil),
