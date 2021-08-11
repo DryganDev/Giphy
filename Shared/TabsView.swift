@@ -15,38 +15,18 @@ struct TabsView: View {
     }
     
     @State var selectTab: Int = 0
-    
-    let screens = [ListItem(title: "Feed"), ListItem(title: "Favorites")]
-    @State var selectedItem: ListItem?
-    
-    init() {
-        selectedItem = screens.first
-    }
+    @State var selectedRow: Row?
     
     var body: some View {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            NavigationView {
-                List(screens, selection: $selectedItem) {
-                    screen in
-                    switch screen.title {
-                        case "Feed":
-                            NavigationLink(LocalizedStringKey(screen.title),
-                                           destination: FeedScreen().modifier(Search()))
-                        case "Favorites":
-                            NavigationLink(LocalizedStringKey(screen.title),
-                                           destination: FavoritesScreen().modifier(Search()))
-                        default:
-                            preconditionFailure("Should be")
-                    }
-                }
-                .navigationTitle(LocalizedStringKey("Tabs"))
-                FeedScreen().modifier(Search())
-            }
-            .navigationViewStyle(.columns)
+            SplitViewController(master: { MasterScreen(selectedRow: $selectedRow) },
+                                detail: { Detail1Screen(selectedRow: $selectedRow) })
         } else {
             TabView(selection: $selectTab) {
                 FeedScreen()
                     .modifier(NavSearch())
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationTitle(LocalizedStringKey("Feed"))
                     .tabItem {
                         Image(systemName: "list.bullet")
                         Text(LocalizedStringKey("Feed"))
@@ -61,6 +41,55 @@ struct TabsView: View {
                 }
                 .tag(1)
             }
+        }
+    }
+    
+}
+
+enum Row: String, CaseIterable, Identifiable {
+    
+    var id: UUID { UUID() }
+    
+    case feed = "Feed"
+    case favorite = "Favorite"
+    
+    var localized: LocalizedStringKey { LocalizedStringKey(rawValue) }
+}
+
+struct MasterScreen: View {
+    
+    @Binding var selectedRow: Row?
+    
+    var body: some View {
+        NavigationView {
+            List(Row.allCases) {
+                row in
+                Button(row.localized) {
+                    selectedRow = row
+                }
+                .foregroundColor(Color.black)
+            }
+            .navigationTitle(LocalizedStringKey("Tabs"))
+        }
+    }
+}
+
+struct Detail1Screen: View {
+    
+    @Binding var selectedRow: Row?
+    
+    var body: some View {
+        switch selectedRow {
+            case .feed:
+                FeedScreen()
+                    .modifier(Search())
+                    .navigationTitle(selectedRow?.localized ?? "")
+                
+            case .favorite:
+                FavoritesScreen()
+                    .navigationTitle(selectedRow?.localized ?? "")
+            default:
+                Text("Nothing Selected")
         }
     }
 }

@@ -54,8 +54,6 @@ struct FeedScreen: View {
             .sheet(item: $shareGif) { gif in
                 ActivityView(activityItem: gif)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(LocalizedStringKey("Feed"))
             .overlay {
                 NavigationLink(destination: DetailScreen(), isActive: $isDetailPresented) {
                     EmptyView()
