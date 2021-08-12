@@ -10,7 +10,7 @@ import Foundation
 // MARK: - GyphyData
 struct GyphyData: Codable {
     let data: [Datum]
-    let pagination: Pagination
+    let pagination: Pagination?
     let meta: Meta
 }
 
@@ -26,7 +26,7 @@ struct Datum: Codable, Hashable {
     let source: String
     let title: String
     let rating: Rating
-    let contentURL: String
+    let contentURL: String?
     let sourceTLD: String
     let sourcePostURL: String
     let isSticker: Int

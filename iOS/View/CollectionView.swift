@@ -52,7 +52,6 @@ struct CollectionView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UICollectionView, context: Context) {
-        uiView.collectionViewLayout.invalidateLayout()
         let dataSource = context.coordinator.dataSource
         context.coordinator.array = array
         compose(dataSource)

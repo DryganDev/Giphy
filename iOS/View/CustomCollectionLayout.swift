@@ -98,6 +98,9 @@ final class CustomCollectionLayout: UICollectionViewFlowLayout {
             
             // 5
             let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+            if insetFrame == CGRect.null {
+                return
+            }
             attributes.frame = insetFrame
             cache.append(attributes)
             
@@ -122,12 +125,20 @@ final class CustomCollectionLayout: UICollectionViewFlowLayout {
     }
     
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        return cache[indexPath.item]
+        return cache[safe: indexPath.item]
     }
     
     override func invalidateLayout() {
         super.invalidateLayout()
         
         cache.removeAll()
+    }
+}
+
+fileprivate extension Collection {
+
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }
