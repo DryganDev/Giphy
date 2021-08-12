@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Foundation
 
 protocol FeedViewModelProtocol: ObservableObject {
     
@@ -24,6 +25,8 @@ final class FeedViewModel: FeedViewModelProtocol {
     @Published var error: Error?
     @Published var isLoading: Bool = false
     @Published var gifs: [Gif] = []
+    
+    var selectedGif: Gif?
     
     private var cancelations: Set<AnyCancellable> = .init()
     
